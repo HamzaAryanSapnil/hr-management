@@ -1,0 +1,61 @@
+{
+  "name": "hr-management-backend",
+  "version": "1.0.0",
+  "description": "HR management REST API using Node.js, TypeScript, Express, Knex, and PostgreSQL.",
+  "main": "dist/server.js",
+  "scripts": {
+    "start": "node ./dist/server.js",
+    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
+    "build": "tsc",
+    "lint": "bun eslint ./src",
+    "lint:fix": "bun eslint ./src --fix",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "migrate:latest": "bun knex migrate:latest --knexfile knexfile.js",
+    "migrate:rollback": "bun knex migrate:rollback --knexfile knexfile.js",
+    "seed:run": "bun knex seed:run --knexfile knexfile.js",
+    "migrate:make": "bun knex migrate:make --knexfile knexfile.js",
+    "seed:make": "bun knex seed:make --knexfile knexfile.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "typescript",
+    "knex",
+    "postgresql",
+    "hr-management",
+    "bun"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.5.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "http-status": "^1.7.4",
+    "jsonwebtoken": "^9.0.2",
+    "knex": "^3.1.0",
+    "multer": "^1.4.5-lts.1",
+    "pg": "^8.13.0",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/jsonwebtoken": "^9.0.6",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.10.2",
+    "eslint": "^9.15.0",
+    "@typescript-eslint/eslint-plugin": "^8.16.0",
+    "@typescript-eslint/parser": "^8.16.0",
+    "prettier": "^3.4.2",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  },
+  "trustedDependencies": [
+    "bcrypt"
+  ]
+}

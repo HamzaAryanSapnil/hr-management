@@ -1,0 +1,20 @@
+import type { Knex } from 'knex';
+
+export async function up(knex: Knex): Promise<void> {
+  return knex.schema.createTable('attendance', function(table) {
+    table.increments('id').primary();
+    table.integer('employee_id').unsigned().notNullable();
+    table.date('date').notNullable();
+    table.time('check_in_time').notNullable();
+    table.timestamps(true, true);
+    
+  
+    table.foreign('employee_id').references('id').inTable('employees').onDelete('RESTRICT');
+    
+    table.unique(['employee_id', 'date']);
+  });
+}
+
+export async function down(knex: Knex): Promise<void> {
+  return knex.schema.dropTable('attendance');
+}

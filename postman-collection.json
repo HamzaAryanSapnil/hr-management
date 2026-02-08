@@ -1,0 +1,309 @@
+{
+  "info": {
+    "name": "HR Management API",
+    "description": "Complete API collection for HR Management System. **Flow:** 1) Run **Login** first to get JWT (token is auto-saved). 2) Then run any other request; all use Bearer token. For **Create/Update Employee with Photo**, choose an image file in the Body > form-data > photo field.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:5000/api/v1" },
+    { "key": "token", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "description": "Run **Login** first. On 200 response, token is saved to collection variable and used by other requests.",
+      "item": [
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@hr.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            },
+            "description": "HR login. Seed user: admin@hr.com / admin123. Saves token to collection variable for other requests."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const response = pm.response.json();",
+                  "  if (response.data && response.data.token) {",
+                  "    pm.collectionVariables.set('token', response.data.token);",
+                  "  }",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Employees",
+      "description": "All endpoints require Bearer token. Create/Update with photo use form-data and optional file field 'photo'.",
+      "item": [
+        {
+          "name": "Get All Employees",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/employees?page=1&limit=10&search=john&sortBy=created_at&sortOrder=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "search", "value": "john", "description": "Partial name/designation search (ILIKE)" },
+                { "key": "designation", "value": "", "disabled": true },
+                { "key": "sortBy", "value": "created_at" },
+                { "key": "sortOrder", "value": "desc" }
+              ]
+            },
+            "description": "List employees with pagination, optional search and designation filter."
+          }
+        },
+        {
+          "name": "Get Employee by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/employees/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "1"]
+            },
+            "description": "Get single employee. Change :id in path as needed."
+          }
+        },
+        {
+          "name": "Create Employee (JSON, no photo)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alice Johnson Lol\",\n  \"age\": 30,\n  \"designation\": \"HR Manager\",\n  \"hiring_date\": \"2026-01-01\",\n  \"date_of_birth\": \"1993-06-15\",\n  \"salary\": 70000\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] },
+            "description": "Create employee without photo. Body must be JSON."
+          }
+        },
+        {
+          "name": "Create Employee with Photo",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "name", "value": "Bob Wilson Sapnil", "type": "text" },
+                { "key": "age", "value": "25", "type": "text" },
+                { "key": "designation", "value": "Sales Representative", "type": "text" },
+                { "key": "hiring_date", "value": "2026-02-01", "type": "text" },
+                { "key": "date_of_birth", "value": "1998-03-10", "type": "text" },
+                { "key": "salary", "value": "55000", "type": "text" },
+                { "key": "photo", "type": "file", "src": [], "description": "Select an image file (e.g. .jpg, .png)" }
+              ]
+            },
+            "url": { "raw": "{{baseUrl}}/employees", "host": ["{{baseUrl}}"], "path": ["employees"] },
+            "description": "Create employee with photo. Use form-data; in 'photo' field select an image file from your machine."
+          }
+        },
+        {
+          "name": "Update Employee (JSON, no photo)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"salary\": 80000,\n  \"designation\": \"Senior Developer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/employees/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "1"]
+            },
+            "description": "Partial update without changing photo. Change :id in path."
+          }
+        },
+        {
+          "name": "Update Employee with Photo",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                { "key": "designation", "value": "Team Lead", "type": "text" },
+                { "key": "salary", "value": "72000", "type": "text" },
+                { "key": "photo", "type": "file", "src": [], "description": "Select new image to replace existing photo" }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/employees/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "1"]
+            },
+            "description": "Update employee and replace photo. Send only fields to update; include 'photo' file to replace image. Change :id in path."
+          }
+        },
+        {
+          "name": "Delete Employee",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/employees/5",
+              "host": ["{{baseUrl}}"],
+              "path": ["employees", "5"]
+            },
+            "description": "Soft delete employee. Change :id in path."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Attendance",
+      "description": "Filter by employee_id, date range (from/to). Pagination and sort supported.",
+      "item": [
+        {
+          "name": "Get All Attendance",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/attendance?employee_id=1&from=2024-12-01&to=2024-12-31&page=1&limit=10&sortBy=date&sortOrder=desc",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance"],
+              "query": [
+                { "key": "employee_id", "value": "1" },
+                { "key": "from", "value": "2025-01-01" },
+                { "key": "to", "value": "2027-12-31" },
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" },
+                { "key": "sortBy", "value": "date" },
+                { "key": "sortOrder", "value": "desc" }
+              ]
+            },
+            "description": "List attendance with optional filters and pagination."
+          }
+        },
+        {
+          "name": "Get Attendance by ID",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/attendance/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "1"]
+            },
+            "description": "Get single attendance record. Change :id in path."
+          }
+        },
+        {
+          "name": "Create/Update Attendance (Upsert)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"employee_id\": 1,\n  \"date\": \"2026-02-05\",\n  \"check_in_time\": \"09:30:00\"\n}"
+            },
+            "url": { "raw": "{{baseUrl}}/attendance", "host": ["{{baseUrl}}"], "path": ["attendance"] },
+            "description": "Insert or update by (employee_id, date). Time format: HH:MM:SS. Late = after 09:45:00."
+          }
+        },
+        {
+          "name": "Update Attendance",
+          "request": {
+            "method": "PUT",
+            "header": [
+              { "key": "Authorization", "value": "Bearer {{token}}" },
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"check_in_time\": \"09:45:00\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/attendance/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "1"]
+            },
+            "description": "Update check_in_time. Time format: HH:MM:SS. Change :id in path."
+          }
+        },
+        {
+          "name": "Delete Attendance",
+          "request": {
+            "method": "DELETE",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/attendance/44",
+              "host": ["{{baseUrl}}"],
+              "path": ["attendance", "44"]
+            },
+            "description": "Hard delete attendance record. Change :id in path."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reports",
+      "description": "Monthly attendance summary. Late = check_in_time > 09:45:00.",
+      "item": [
+        {
+          "name": "Monthly Attendance Report",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/reports/attendance?month=2026-02",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "attendance"],
+              "query": [{ "key": "month", "value": "2026-02", "description": "Required, format YYYY-MM" }]
+            },
+            "description": "Summary per employee: days_present, times_late for the given month."
+          }
+        },
+        {
+          "name": "Monthly Attendance Report (Specific Employee)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{token}}" }],
+            "url": {
+              "raw": "{{baseUrl}}/reports/attendance?month=2026-02&employee_id=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["reports", "attendance"],
+              "query": [
+                { "key": "month", "value": "2026-02" },
+                { "key": "employee_id", "value": "1" }
+              ]
+            },
+            "description": "Same report filtered by employee_id."
+          }
+        }
+      ]
+    }
+  ]
+}
