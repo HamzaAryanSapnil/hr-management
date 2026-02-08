@@ -81,6 +81,86 @@ This project follows **Object-Oriented Programming (OOP)** principles with a cle
 - **Single Responsibility**: Each class has one clear purpose
 - **Dependency Management**: Services use dependency injection pattern through imports
 
+
+## 📮 Postman Collection
+
+A complete Postman collection is included in `postman-collection.json` with all API endpoints pre-configured.
+
+### Import to Postman:
+1. Open Postman
+2. Click **Import** button
+3. Select `postman-collection.json` file
+4. Collection will be imported with all requests
+
+### Using the Collection:
+1. **Run Login first** - This will automatically save the JWT token
+2. All other requests will use the saved token automatically
+3. For photo uploads, select a file in the `photo` field under Body > form-data
+
+### Collection Features:
+- ✅ Auto-saves JWT token after login
+- ✅ All endpoints organized by module
+- ✅ Pre-filled example data
+- ✅ Query parameters with descriptions
+- ✅ Both JSON and form-data examples for employee creation
+- ✅ Detailed descriptions for each endpoint
+
+### Collection Variables:
+- `baseUrl` - API base URL (default: http://localhost:5000/api/v1)
+- `token` - JWT token (auto-saved after login)
+
+## 🔐 Default Credentials
+
+After running seeds, you can login with:
+- **Email**: admin@hr.com
+- **Password**: admin123
+
+## 📤 Response Format
+
+All API responses follow a standardized format:
+
+### Success Response
+```json
+{
+  "success": true,
+  "message": "Operation successful message",
+  "data": {
+    // Response data here
+  },
+  "meta": {
+    // Pagination metadata (for list endpoints)
+    "page": 1,
+    "limit": 10,
+    "total": 50
+  }
+}
+```
+
+### Error Response
+```json
+{
+  "success": false,
+  "message": "Error message",
+  "errorMessages": [
+    {
+      "path": "field_name",
+      "message": "Specific error message"
+    }
+  ],
+  "stack": "Error stack trace (only in development)"
+}
+```
+
+### HTTP Status Codes
+- `200` - Success
+- `201` - Created
+- `400` - Bad Request (validation errors)
+- `401` - Unauthorized (invalid/missing token)
+- `404` - Not Found
+- `500` - Internal Server Error
+
+
+
 ## 📁 Project Structure
 
 ```
@@ -491,82 +571,6 @@ curl "http://localhost:5000/api/v1/reports/attendance?month=2024-12&employee_id=
 - `bun run migrate:rollback` - Rollback migrations
 - `bun run seed:run` - Run database seeds
 
-## 📮 Postman Collection
-
-A complete Postman collection is included in `postman-collection.json` with all API endpoints pre-configured.
-
-### Import to Postman:
-1. Open Postman
-2. Click **Import** button
-3. Select `postman-collection.json` file
-4. Collection will be imported with all requests
-
-### Using the Collection:
-1. **Run Login first** - This will automatically save the JWT token
-2. All other requests will use the saved token automatically
-3. For photo uploads, select a file in the `photo` field under Body > form-data
-
-### Collection Features:
-- ✅ Auto-saves JWT token after login
-- ✅ All endpoints organized by module
-- ✅ Pre-filled example data
-- ✅ Query parameters with descriptions
-- ✅ Both JSON and form-data examples for employee creation
-- ✅ Detailed descriptions for each endpoint
-
-### Collection Variables:
-- `baseUrl` - API base URL (default: http://localhost:5000/api/v1)
-- `token` - JWT token (auto-saved after login)
-
-## 🔐 Default Credentials
-
-After running seeds, you can login with:
-- **Email**: admin@hr.com
-- **Password**: admin123
-
-## 📤 Response Format
-
-All API responses follow a standardized format:
-
-### Success Response
-```json
-{
-  "success": true,
-  "message": "Operation successful message",
-  "data": {
-    // Response data here
-  },
-  "meta": {
-    // Pagination metadata (for list endpoints)
-    "page": 1,
-    "limit": 10,
-    "total": 50
-  }
-}
-```
-
-### Error Response
-```json
-{
-  "success": false,
-  "message": "Error message",
-  "errorMessages": [
-    {
-      "path": "field_name",
-      "message": "Specific error message"
-    }
-  ],
-  "stack": "Error stack trace (only in development)"
-}
-```
-
-### HTTP Status Codes
-- `200` - Success
-- `201` - Created
-- `400` - Bad Request (validation errors)
-- `401` - Unauthorized (invalid/missing token)
-- `404` - Not Found
-- `500` - Internal Server Error
 
 ## 🌟 Key Features Explained
 
