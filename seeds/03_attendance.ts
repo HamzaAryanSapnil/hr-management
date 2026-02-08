@@ -1,24 +1,27 @@
 import type { Knex } from 'knex';
 
 export async function seed(knex: Knex): Promise<void> {
-  // Deletes ALL existing entries
   await knex('attendance').del();
   
-  // Get employee IDs
   const employees = await knex('employees').select('id');
   
-  const attendanceRecords = [];
+  const attendanceRecords: Array<{
+    employee_id: number;
+    date: string;
+    check_in_time: string;
+    created_at: Date;
+    updated_at: Date;
+  }> = [];
+  
   const today = new Date();
   
-  // Generate attendance records for the last 30 days
   for (let i = 0; i < 30; i++) {
     const date = new Date(today);
     date.setDate(date.getDate() - i);
     
-    employees.forEach((employee, index) => {
-      // Skip some days randomly to simulate real attendance
-      if (Math.random() > 0.1) { // 90% attendance rate
-        const hour = Math.random() > 0.2 ? 9 : 10; // 80% on time, 20% late
+    employees.forEach((employee) => {
+      if (Math.random() > 0.1) {
+        const hour = Math.random() > 0.2 ? 9 : 10;
         const minute = Math.floor(Math.random() * 60);
         const checkInTime = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00`;
         
@@ -33,6 +36,7 @@ export async function seed(knex: Knex): Promise<void> {
     });
   }
   
-  // Inserts seed entries
-  await knex('attendance').insert(attendanceRecords);
+  if (attendanceRecords.length > 0) {
+    await knex('attendance').insert(attendanceRecords);
+  }
 }
